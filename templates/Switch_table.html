@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="//unpkg.com/element-ui@2.2.2/lib/theme-chalk/index.css">
+</head>
+<body>
+<el-container class="is-vertical" id="app" style="height:100%;">
+    <el-header>Table</el-header>
+    <el-container class="init-v-hidden">
+        <el-main id="mainDiv" class="pj-main">
+            <div style="float: left;display: inline-block;">
+                <el-button icon="el-icon-plus" type="primary" @click="dialogFormVisible = true" plain>
+                    增加
+                </el-button>
+            </div>
+            <div id="toolbarDiv" class="pj-toolbar">
+                <div style="float: right;display: inline-block;">
+                    <el-input
+                            id='put'
+                            placeholder="请输入内容"
+                            v-model="input10"
+                            clearable
+                            prefix-icon="el-icon-search"
+                            @blur="blur">
+                    </el-input>
+                </div>
+            </div>
+            <el-table :data="tableData" border
+                      style="width:100%" stripe loading="loading">
+                <el-table-column v-for="(value, key) in tableData[0]" :key="key" :label="key"
+                                 align="center"
+                                 style="height: 10px">
+                    <template slot-scope="scope">
+                        <span v-html="scope.row[key]" style="height: 20px; width: 120px;"></span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="Action" align="center" style="height: 10px">
+                    <template slot-scope="scope">
+                        <el-button
+                                type="text"
+                                icon="el-icon-edit"
+                                id="edit"
+                                @click="Edit(scope.row)">
+                        </el-button>
+                        <el-button
+                                type="text"
+                                type="danger"
+                                icon="el-icon-delete"
+                                @click="handleDelete(scope.$index, scope.row)">
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-dialog :title="isNew?'编辑':'添加'" :visible.sync="dialogFormVisible" @close="close">
+                <el-form>
+                    <el-form-item v-for="(value,key) in tableData[0]" :label="key">
+                        <div v-if="key == 'id'">
+                            <el-input v-model="demo[key]" auto-complete="off" :disabled="true"></el-input>
+                        </div>
+                        <div v-else>
+                            <el-input v-model="demo[key]" auto-complete="off"></el-input>
+                        </div>
+                    </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="dialogFormVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="post_data(demo)">确 定</el-button>
+                </div>
+            </el-dialog>
+            <div class="block">
+                <el-pagination @size-change="handleSizeChange"
+                               @current-change="handleCurrentChange"
+                               :current-page="currentPage"
+                               :page-sizes="[5, 10, 50, 100]"
+                               :page-size="pagesize"
+                               layout="total, sizes, prev, pager, next, jumper"
+                               :total="length"
+                               align="right">
+                </el-pagination>
+            </div>
+        </el-main>
+    </el-container>
+</el-container>
+</body>
+<style>
+    .el-header {
+        background-color: #606266;
+        color: #F2F6FC;
+        line-height: 60px;
+    }
+</style>
+<script src="//unpkg.com/vue/dist/vue.js"></script>
+<script src="//unpkg.com/element-ui@2.2.2/lib/index.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            tableData: [],
+            length: 0,
+            currentPage: 1,
+            pagesize: 5,
+            dialogTableVisible: false,
+            input10: '',
+            dialogFormVisible: false,
+            formLabelWidth: '120px',
+            demo: {},
+            isNew: false
+        }
+        ,
+        created: function () {
+            var data = {
+                "page": {
+                    "index": this.currentPage,
+                    "size": this.pagesize
+                },
+                "search": {
+                    "value": this.input10
+                }
+            };
+            axios.post('/show', {
+                data
+            })
+                .then(function (response) {
+                    app.tableData = response.data.data
+                    app.length = response.data.total
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        },
+        methods: {
+            handleSizeChange: function (size) {
+                this.pagesize = size;
+                var data = {
+                    "page": {
+                        "index": this.currentPage,
+                        "size": this.pagesize
+                    },
+                    "search": {
+                        "value": this.input10
+                    }
+                };
+                axios.post('/show', {
+                    data
+                })
+                    .then(function (response) {
+                        app.tableData = response.data.data
+                        app.length = response.data.total
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+
+            },
+            handleCurrentChange: function (currentPage) {
+                app.currentPage = currentPage;
+                var data = {
+                    "page": {
+                        "index": app.currentPage,
+                        "size": this.pagesize
+                    },
+                    "search": {
+                        "value": this.input10
+                    }
+                };
+                axios.post('/show', {
+                    data
+                })
+                    .then(function (response) {
+                        app.tableData = response.data.data
+                        app.length = response.data.total
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+
+            },
+            blur(input10) {
+                var data = {
+                    "page": {
+                        "index": this.currentPage,
+                        "size": this.pagesize
+                    },
+                    "search": {
+                        "value": this.input10
+                    }
+                };
+                axios.post('/show', {
+                    data
+                })
+                    .then(function (response) {
+                        app.tableData = response.data.data
+                        app.length = response.data.total
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+            handleDelete(index, row) {
+                var id = row.id
+                axios.post('/delete', {
+                    id
+                })
+                    .then(function (response) {
+                        location.reload()
+
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+            Edit(row) {
+                app.dialogFormVisible = true
+                app.isNew = true
+                this.demo = JSON.parse(JSON.stringify(row));
+                console.log(this.demo)
+            },
+            post_data(res) {
+                var data = this.demo
+                if (this.isNew) {
+                    axios.post('/edit', {
+                        data
+                    })
+                        .then(function (response) {
+                            location.reload()
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                } else {
+                    axios.post('/insert', {
+                        data
+                    })
+                        .then(function (response) {
+                            location.reload()
+
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                }
+
+            },
+            close() {
+                app.demo = {}
+            }
+        },
+    })
+</script>
+
+</html>
