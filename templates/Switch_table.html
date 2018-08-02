@@ -124,7 +124,6 @@
             })
                 .then(function (response) {
                     app.tableData = response.data.data
-                    console.log(app.tableData)
                     app.length = response.data.total
                 })
                 .catch(function (error) {
@@ -230,61 +229,42 @@
                             console.log(error);
                         });
                 } else {
-                    var tt = []
-                    if (this.demo.devicename == undefined) {
+                    if (this.demo.devicename === undefined) {
                         this.demo['devicename'] = ' '
                     }
-                    if (this.demo.ip == undefined) {
+                    if (this.demo.ip === undefined) {
                         this.demo['ip'] = ' '
                     }
-                    if (this.demo.location == undefined) {
+                    if (this.demo.location === undefined) {
                         this.demo['location'] = ' '
                     }
-                    if (this.demo.area == undefined) {
+                    if (this.demo.area === undefined) {
                         this.demo['area'] = ' '
                     }
-                    if (this.demo.hardware == undefined) {
+                    if (this.demo.hardware === undefined) {
                         this.demo['hardware'] = ' '
                     }
-                    if (this.demo.platform == undefined) {
+                    if (this.demo.platform === undefined) {
                         this.demo['platform'] = ' '
                     }
-                    if (this.demo.version == undefined) {
+                    if (this.demo.version === undefined) {
                         this.demo['version'] = ' '
                     }
-                    if (this.demo.sn == undefined) {
+                    if (this.demo.sn === undefined) {
                         this.demo['sn'] = ' '
                     }
-                    if (this.demo.slot0 == undefined) {
+                    if (this.demo.slot0 === undefined) {
                         this.demo['slot0'] = ' '
                     }
 
-                    if (this.demo.memory == undefined) {
+                    if (this.demo.memory === undefined) {
                         this.demo['memory'] = ' '
                     }
 
-                    if (this.demo.bootflash == undefined) {
+                    if (this.demo.bootflash === undefined) {
                         this.demo['bootflash'] = ' '
                     }
-
-                    console.log('*******', this.demo)
-                    var _dt = [{
-                        "devicename": data['devicename'],
-                        "ip": data['ip'],
-                        "location": data['location'],
-                        "area": data['devicename'],
-                        "hardware": data['hardware'],
-                        "platform": data['platform'],
-                        "version": data['version'],
-                        "sn": data['sn'],
-                        "slot0": data['slot0'],
-                        "memory": data['memory'],
-                        "bootflash": data['bootflash'],
-                    }]
-                    console.log(_dt)
-
-
-                    // console.log(data)
+                    var data = this.demo
                     axios.post('/insert', {
                         data
                     })

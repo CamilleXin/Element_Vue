@@ -62,10 +62,11 @@ def and_or(value):
 
 @app.route('/insert', methods=['POST', 'GET'])
 def insert():
-    print(request.json['data'])
+    data = request.json['data']
+    placeholders = ', '.join(['%s'] * len(data))
     values = list(request.json['data'].values())
-    print(values)
-    sql = 'insert into switch_device values (NULL , %s, %s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+    columns = ', '.join(data.keys())
+    sql = "INSERT INTO switch_device ( %s ) VALUES ( %s )" % (columns, placeholders)
     cursor.execute(sql, values)
     db.commit()
     return ''
